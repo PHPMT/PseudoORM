@@ -1,0 +1,15 @@
+{
+    "name": "hora-extra-sinop/pseudo-orm",
+    "authors": [
+        {
+            "name": "Jack Makiyama",
+            "email": "jack@phpbr.org"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "PseudoORM\\": "src/"
+        }
+    }
+}
