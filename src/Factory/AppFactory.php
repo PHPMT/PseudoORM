@@ -43,7 +43,7 @@ class AppFactory
             $repository = $class . 'DAO';
             return new $repository;
         } catch (Exception $e) {
-            throw new Exception($e->getTrace());
+            throw new Exception($e);
         }
     }
 }

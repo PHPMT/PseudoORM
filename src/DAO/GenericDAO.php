@@ -2,17 +2,19 @@
 namespace PseudoORM\DAO;
 
 use PseudoORM\Entity\EntidadeBase;
+use PseudoORM\Exception;
 use \PDO;
-use \Exception;
 
 class GenericDAO implements IGenericDAO
 {
 
-    protected $type;
+    protected $type, $tableName;
 
     public function __construct($type)
     {
-        $this->type = $type;
+    	$classe = new \ReflectionClass($type);
+        $this->type = $classe->getName();
+        $this->tableName = strtolower($classe->getShortName());
     }
 
     public function create()
@@ -41,7 +43,7 @@ class GenericDAO implements IGenericDAO
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
         $sql  = " SELECT * FROM "  .
             SCHEMA .
-            strtolower($this->type) .
+            $this->tableName .
             ($sortColumn != null ? " ORDER BY $sortColumn $sortOrder " : '') .
             " LIMIT :limit OFFSET :offset; ";
         $stmt = $connection->prepare($sql);
@@ -71,7 +73,7 @@ class GenericDAO implements IGenericDAO
         }
         $queryParams = "(".implode(", ", array_keys($attributos)).") VALUES(". implode(', ', $parametros) ." )";
         try {
-            $sql  = " INSERT INTO "  . SCHEMA . strtolower($this->type) . "$queryParams RETURNING uid;";
+            $sql  = " INSERT INTO "  . SCHEMA . $this->tableName . " $queryParams RETURNING uid;";
             $stmt = $connection->prepare($sql);
             $this->bindArrayValue($stmt, $attributos);
             $stmt->execute();
@@ -105,7 +107,7 @@ class GenericDAO implements IGenericDAO
         $queryParams = implode(', ', $parametros);
 
         try {
-            $sql = "UPDATE " . SCHEMA . strtolower($this->type) . " SET " . $queryParams . ' WHERE uid = :uid;';
+            $sql = "UPDATE " . SCHEMA . $this->tableName . " SET " . $queryParams . ' WHERE uid = :uid;';
             $stmt = $connection->prepare($sql);
             $stmt->bindValue(":uid", $object->uid, PDO::PARAM_INT);
             $this->bindArrayValue($stmt, $attributos);
@@ -133,7 +135,7 @@ class GenericDAO implements IGenericDAO
                 DB_PASSWORD,
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
             );
-            $sql  = " DELETE FROM "  . SCHEMA . strtolower($this->type) . " where uid = :uid";
+            $sql  = " DELETE FROM "  . SCHEMA . $this->tableName . " where uid = :uid";
             $stmt = $connection->prepare($sql);
             $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
             $stmt->execute();
@@ -154,7 +156,7 @@ class GenericDAO implements IGenericDAO
      */
     private function bindArrayValue($query, $array, $typeArray = false)
     {
-        if (is_object($query) && ($query instanceof PDOStatement)) {
+        if (is_object($query) && ($query instanceof \PDOStatement)) {
             foreach ($array as $key => $value) {
                 if ($typeArray) {
                     $query->bindValue(":$key", $value, $typeArray[$key]);
@@ -172,6 +174,7 @@ class GenericDAO implements IGenericDAO
                         $param = false;
                     }
 
+                    
                     if ($param) {
                         $query->bindValue(":$key", $valor, $param);
                     }

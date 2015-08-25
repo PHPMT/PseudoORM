@@ -1,4 +1,6 @@
 <?php
+ini_set("display_errors",1);
+
 define("DB_USERNAME", "postgres");
 define("DB_PASSWORD", "postgres");
 define("DB_HOST", 'localhost');
