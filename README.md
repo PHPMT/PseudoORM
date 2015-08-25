@@ -17,6 +17,6 @@ Para modificar o comportamento padrão, basta criar um Arquivo de persistencia e
 ```
 $dao = AppFactory::getRepository(new Usuario());
 
-echo $dao->generate();
+echo $dao->generate(new PseudoORM\Services\PostgreSQLDataBaseCreator());
 
 ```
