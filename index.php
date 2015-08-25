@@ -1,6 +1,11 @@
 <?php
 ini_set("display_errors",1);
 
+// TODO Include it in autoload
+require_once 'libs/addendum/annotations.php';
+require_once 'src/Entity/Annotations.php';
+
+
 define("DB_USERNAME", "postgres");
 define("DB_PASSWORD", "postgres");
 define("DB_HOST", 'localhost');
@@ -31,15 +36,22 @@ include $composer_autoload;
 
 $dao = AppFactory::getRepository(new Usuario());
 
+// USe para gerar o script de criação do banco
+echo $dao->generate();
+
+// Realizar operações básicas
 $usuario = $dao->create();
 $usuario->nome = 'Zé da Silva';
 $usuario->idade = 25;
+$usuario->cpf = '000555111';
+$usuario->senha  = '123456';
 
 $dao->insert($usuario);
 
 
 $usuarios = $dao->getList();
 
+echo "<Br><Br>";
 foreach ($usuarios as $usuario) {
     echo $usuario->nome.'<br>';
 }

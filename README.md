@@ -10,24 +10,13 @@ Para criar novas classes, basta criar uma entidade na pasta `model/Entity/` exte
 Para modificar o comportamento padrão, basta criar um Arquivo de persistencia extendendo a classe `GenericDAO` dentro da pasta `DAO/impl` podendo sobrescrever métodos existentes e/ou adicionar novos. 
 
 
-## Para criar o banco no Postgresql use:
+## Para gerar script de criação do BD para Postgresql use:
+
+
 
 ```
--- Table: usuario
+$dao = AppFactory::getRepository(new Usuario());
 
--- DROP TABLE usuario;
-
-CREATE TABLE usuario
-(
-  uid serial NOT NULL,
-  nome character varying,
-  idade integer,
-  CONSTRAINT usuario_pkey PRIMARY KEY (uid)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE usuario
-  OWNER TO postgres;
+echo $dao->generate();
 
 ```

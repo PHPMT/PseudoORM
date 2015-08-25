@@ -3,7 +3,11 @@ namespace PseudoORM\Entity;
 
 class EntidadeBase
 {
-    public $uid;
+	/**
+	 * @Id
+	 * @Column(name='uid')
+	 */
+	public $uid;
 
     /**
      * Utilizado para criar entidade com base nos campos do formulário.

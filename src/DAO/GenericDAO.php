@@ -12,11 +12,20 @@ class GenericDAO implements IGenericDAO
 
     public function __construct($type)
     {
-    	$classe = new \ReflectionClass($type);
+    	$classe = new \ReflectionAnnotatedClass($type);
         $this->type = $classe->getName();
-        $this->tableName = strtolower($classe->getShortName());
+        $this->setTableName();
     }
 
+    private function setTableName(){
+    	$classe = new \ReflectionAnnotatedClass($this->type);
+    	if(!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+    		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
+    	} else {
+    		$this->tableName = strtolower($classe->getShortName());
+    	}
+    }
+    
     public function create()
     {
         return new $this->type();
@@ -181,5 +190,54 @@ class GenericDAO implements IGenericDAO
                 }
             }
         }
+    }
+    
+    
+    // TODO Refactor to automatically detect the property's type
+    public function generate(){
+    
+    	$reflectionClass = new \ReflectionAnnotatedClass($this->type);
+    	
+       	$tabela = $this->tableName;
+    	
+    	$propriedades = $reflectionClass->getProperties();
+    	foreach($propriedades as $propriedade){
+    		if($propriedade->hasAnnotation('Column')){
+    			$getter = $propriedade->name;
+    			$key = $propriedade->getAnnotation('Column')->name;
+    			$params = (array) $propriedade->getAnnotation('Column');
+    			foreach($params as $chave=>$valor){
+    				$fields[$key][$chave] = $valor;
+    			}
+    		}
+    		if ($propriedade->hasAnnotation('Join')){
+    			$params = (array) $propriedade->getAnnotation('Join');
+    			foreach($params as $chave=>$valor){
+    				$fields[$key][$chave] = $valor;
+    			}
+    		}
+    	}
+    
+    	$script = "DROP TABLE IF EXISTS ".SCHEMA.$tabela."; \n"
+    			."CREATE TABLE ".SCHEMA.$tabela ." ( \n";
+    	$uid;
+    
+    	foreach($fields as $key=>$value){
+    		$fk;
+    		if (isset($value['joinTable'])){
+    			$fk = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
+    			$fk .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
+    			$fk .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
+    			$script .= "\t". $key . " integer, \n";
+    		} else if($key == 'uid'){
+    			$script .= "\t". $key . " serial NOT NULL, \n";
+    			$uid = $key;
+    		} else {
+    			$script .= "\t". $key . " " . ($value['type'] == 'integer' ? 'integer' : ($value['type'] == 'timestamp' ? 'timestamp' : 'character varying')) . ", \n";
+    		}
+    	}
+    	$script .= @$fk;
+    	$script .= "\tCONSTRAINT ".$tabela."_pk PRIMARY KEY (".$uid.") \n";
+    	return $script . " );\n\n -- \n";
     }
 }
