@@ -4,6 +4,10 @@
         {
             "name": "Jack Makiyama",
             "email": "jack@phpbr.org"
+        },
+        {
+            "name": "Evandro Mohr",
+            "email": "mohr.evandro@gmail.com"
         }
     ],
     "require": {},
