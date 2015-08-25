@@ -33,6 +33,9 @@ class GenericDAO implements IGenericDAO
         return new $this->type();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getById($uid)
     {
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
@@ -46,8 +49,8 @@ class GenericDAO implements IGenericDAO
         return $object;
     }
 
-    /**
-     * @see IGenericDAO::getList()
+  	/**
+     * {@inheritDoc}
      */
     public function getList($sortColumn = null, $sortOrder = 'ASC', $limit = 1000000, $offset = 0)
     {
@@ -68,7 +71,7 @@ class GenericDAO implements IGenericDAO
     }
 
     /**
-     * @see IGenericDAO::insert();
+     * {@inheritDoc}
      */
     public function insert(EntidadeBase $object)
     {
@@ -101,7 +104,7 @@ class GenericDAO implements IGenericDAO
 
 
     /**
-     * @see IGenericDAO::update();
+     * {@inheritDoc}
      */
     public function update(EntidadeBase $object)
     {
@@ -132,7 +135,7 @@ class GenericDAO implements IGenericDAO
     }
 
     /**
-     * @see IGenericDAO::delete();
+     * {@inheritDoc}
      */
     public function delete($uid)
     {
@@ -193,7 +196,7 @@ class GenericDAO implements IGenericDAO
     
     
     /**
-     * @see \PseudoORM\DAO\IGenericDAO::generate()
+     * {@inheritDoc}
      */
     public function generate(IDataBaseCreator $creator, $create=false){
     

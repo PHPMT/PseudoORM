@@ -11,8 +11,8 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
 	protected $tableName;
 	
 	/**
-	 * @see \PseudoORM\Services\IDataBaseCreator::scriptCreation()
-	 */
+     * {@inheritDoc}
+     */
 	public final function scriptCreation($entity, $generateDropStatement=false){
 		
 		$classe = new \ReflectionAnnotatedClass($entity);
