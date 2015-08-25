@@ -21,7 +21,7 @@ class GenericDAO implements IGenericDAO
 
     private function setTableName(){
     	$classe = new \ReflectionAnnotatedClass($this->type);
-    	if(!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+    	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
     	} else {
     		$this->tableName = strtolower($classe->getShortName());

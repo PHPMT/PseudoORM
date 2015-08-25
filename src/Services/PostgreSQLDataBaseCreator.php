@@ -4,6 +4,7 @@ namespace PseudoORM\Services;
 
 use PseudoORM\Services\IDataBaseCreator;
 use PseudoORM\Entity\EntidadeBase;
+use PseudoORM\Annotations;
 
 class PostgreSQLDataBaseCreator implements IDataBaseCreator{
 	
