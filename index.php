@@ -22,6 +22,7 @@ define('EXCEPTIONS', MODELS . 'exception/');
 
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
+use PseudoORM\Services\PostgreSQLDataBaseCreator;
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
@@ -37,7 +38,7 @@ include $composer_autoload;
 $dao = AppFactory::getRepository(new Usuario());
 
 // USe para gerar o script de criação do banco
-echo $dao->generate();
+echo $dao->generate(new PostgreSQLDataBaseCreator());
 
 // Realizar operações básicas
 $usuario = $dao->create();

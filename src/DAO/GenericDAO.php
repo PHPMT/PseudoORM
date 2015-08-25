@@ -1,9 +1,11 @@
 <?php
 namespace PseudoORM\DAO;
 
+use PseudoORM\Services\IDataBaseCreator;
 use PseudoORM\Entity\EntidadeBase;
 use PseudoORM\Exception;
 use \PDO;
+
 
 class GenericDAO implements IGenericDAO
 {
@@ -163,81 +165,50 @@ class GenericDAO implements IGenericDAO
      * @param array $array : associative array containing the values ​​to bind
      * @param array $typeArray : associative array with the desired value for its corresponding key in $array
      */
-    private function bindArrayValue($query, $array, $typeArray = false)
+    private function bindArrayValue(\PDOStatement $query, $array, $typeArray = false)
     {
-        if (is_object($query) && ($query instanceof \PDOStatement)) {
-            foreach ($array as $key => $value) {
-                if ($typeArray) {
-                    $query->bindValue(":$key", $value, $typeArray[$key]);
-                } else {
-                    $valor = $value;
-                    if (is_int($valor)) {
-                        $param = PDO::PARAM_INT;
-                    } elseif (is_bool($valor))
-                        $param = PDO::PARAM_BOOL;
-                    elseif (is_null($valor))
-                        $param = PDO::PARAM_NULL;
-                    elseif (is_string($valor))
-                        $param = PDO::PARAM_STR;
-                    else {
-                        $param = false;
-                    }
-
+		foreach ($array as $key => $value) {
+			if ($typeArray) {
+				$query->bindValue(":$key", $value, $typeArray[$key]);
+			} else {
+				$valor = $value;
+             	if (is_int($valor)) {
+                	$param = PDO::PARAM_INT;
+                } elseif (is_bool($valor))
+                	$param = PDO::PARAM_BOOL;
+                elseif (is_null($valor))
+                	$param = PDO::PARAM_NULL;
+                elseif (is_string($valor))
+                	$param = PDO::PARAM_STR;
+                else {
+                	$param = false;
+                }
                     
-                    if ($param) {
-                        $query->bindValue(":$key", $valor, $param);
-                    }
+                if ($param) {
+                	$query->bindValue(":$key", $valor, $param);
                 }
             }
         }
     }
     
     
-    // TODO Refactor to automatically detect the property's type
-    public function generate(){
+    /**
+     * @see \PseudoORM\DAO\IGenericDAO::generate()
+     */
+    public function generate(IDataBaseCreator $creator, $create=false){
     
-    	$reflectionClass = new \ReflectionAnnotatedClass($this->type);
+    	$script = $creator->scriptCreation($this->type, true);
     	
-       	$tabela = $this->tableName;
-    	
-    	$propriedades = $reflectionClass->getProperties();
-    	foreach($propriedades as $propriedade){
-    		if($propriedade->hasAnnotation('Column')){
-    			$getter = $propriedade->name;
-    			$key = $propriedade->getAnnotation('Column')->name;
-    			$params = (array) $propriedade->getAnnotation('Column');
-    			foreach($params as $chave=>$valor){
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
-    		if ($propriedade->hasAnnotation('Join')){
-    			$params = (array) $propriedade->getAnnotation('Join');
-    			foreach($params as $chave=>$valor){
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
+    	if($create == false){
+    		return $script;
+    	} else {
+    		// TODO extract to method
+	    	try {
+	    		$dbh = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
+	    		$dbh->exec($script);// or die(print_r($dbh->errorInfo(), true));
+	    	} catch (PDOException $e) {
+	    		die("DB ERROR: ". $e->getMessage());
+	    	}
     	}
-    
-    	$script = "DROP TABLE IF EXISTS ".SCHEMA.$tabela."; \n"
-    			."CREATE TABLE ".SCHEMA.$tabela ." ( \n";
-    	$uid;
-    
-    	foreach($fields as $key=>$value){
-    		$fk;
-    		if (isset($value['joinTable'])){
-    			$fk = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
-    			$fk .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
-    			$fk .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
-    			$script .= "\t". $key . " integer, \n";
-    		} else if($key == 'uid'){
-    			$script .= "\t". $key . " serial NOT NULL, \n";
-    			$uid = $key;
-    		} else {
-    			$script .= "\t". $key . " " . ($value['type'] == 'integer' ? 'integer' : ($value['type'] == 'timestamp' ? 'timestamp' : 'character varying')) . ", \n";
-    		}
-    	}
-    	$script .= @$fk;
-    	$script .= "\tCONSTRAINT ".$tabela."_pk PRIMARY KEY (".$uid.") \n";
-    	return $script . " );\n\n -- \n";
     }
 }
