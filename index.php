@@ -1,4 +1,6 @@
 <?php
+ini_set("display_errors",1);
+
 define("DB_USERNAME", "postgres");
 define("DB_PASSWORD", "postgres");
 define("DB_HOST", 'localhost');
@@ -15,6 +17,9 @@ define('EXCEPTIONS', MODELS . 'exception/');
 
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
+use PseudoORM\Services\PostgreSQLDataBaseCreator;
+
+
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
@@ -23,21 +28,35 @@ if (false === file_exists($composer_autoload)) {
 
 include $composer_autoload;
 
+require_once 'src/Annotations/Column.php';
+require_once 'src/Annotations/Id.php';
+require_once 'src/Annotations/Table.php';
+require_once 'src/Annotations/Join.php';
+require_once 'src/Annotations/Persistent.php';
+
+
 /**
  * Exemplo de uso
  */
 
 $dao = AppFactory::getRepository(new Usuario());
 
+// USe para gerar o script de criação do banco
+echo $dao->generate(new PostgreSQLDataBaseCreator());
+
+// Realizar operações básicas
 $usuario = $dao->create();
 $usuario->nome = 'Zé da Silva';
 $usuario->idade = 25;
+$usuario->cpf = '000555111';
+$usuario->senha  = '123456';
 
 $dao->insert($usuario);
 
 
 $usuarios = $dao->getList();
 
+echo "<Br><Br>";
 foreach ($usuarios as $usuario) {
     echo $usuario->nome.'<br>';
 }

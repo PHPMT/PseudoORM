@@ -1,25 +1,43 @@
 <?php
 namespace PseudoORM\DAO;
 
+use PseudoORM\Services\IDataBaseCreator;
 use PseudoORM\Entity\EntidadeBase;
+use PseudoORM\Exception;
 use \PDO;
-use \Exception;
+
+use Addendum\ReflectionAnnotatedClass;
+
 
 class GenericDAO implements IGenericDAO
 {
 
-    protected $type;
+    protected $type, $tableName;
 
     public function __construct($type)
     {
-        $this->type = $type;
+    	$classe = new ReflectionAnnotatedClass($type);
+        $this->type = $classe->getName();
+        $this->setTableName();
     }
 
+    private function setTableName(){
+    	$classe = new ReflectionAnnotatedClass($this->type);
+    	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+    		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
+    	} else {
+    		$this->tableName = strtolower($classe->getShortName());
+    	}
+    }
+    
     public function create()
     {
         return new $this->type();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getById($uid)
     {
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
@@ -33,15 +51,15 @@ class GenericDAO implements IGenericDAO
         return $object;
     }
 
-    /**
-     * @see IGenericDAO::getList()
+  	/**
+     * {@inheritDoc}
      */
     public function getList($sortColumn = null, $sortOrder = 'ASC', $limit = 1000000, $offset = 0)
     {
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
         $sql  = " SELECT * FROM "  .
             SCHEMA .
-            strtolower($this->type) .
+            $this->tableName .
             ($sortColumn != null ? " ORDER BY $sortColumn $sortOrder " : '') .
             " LIMIT :limit OFFSET :offset; ";
         $stmt = $connection->prepare($sql);
@@ -55,7 +73,7 @@ class GenericDAO implements IGenericDAO
     }
 
     /**
-     * @see IGenericDAO::insert();
+     * {@inheritDoc}
      */
     public function insert(EntidadeBase $object)
     {
@@ -71,7 +89,7 @@ class GenericDAO implements IGenericDAO
         }
         $queryParams = "(".implode(", ", array_keys($attributos)).") VALUES(". implode(', ', $parametros) ." )";
         try {
-            $sql  = " INSERT INTO "  . SCHEMA . strtolower($this->type) . "$queryParams RETURNING uid;";
+            $sql  = " INSERT INTO "  . SCHEMA . $this->tableName . " $queryParams RETURNING uid;";
             $stmt = $connection->prepare($sql);
             $this->bindArrayValue($stmt, $attributos);
             $stmt->execute();
@@ -88,7 +106,7 @@ class GenericDAO implements IGenericDAO
 
 
     /**
-     * @see IGenericDAO::update();
+     * {@inheritDoc}
      */
     public function update(EntidadeBase $object)
     {
@@ -105,7 +123,7 @@ class GenericDAO implements IGenericDAO
         $queryParams = implode(', ', $parametros);
 
         try {
-            $sql = "UPDATE " . SCHEMA . strtolower($this->type) . " SET " . $queryParams . ' WHERE uid = :uid;';
+            $sql = "UPDATE " . SCHEMA . $this->tableName . " SET " . $queryParams . ' WHERE uid = :uid;';
             $stmt = $connection->prepare($sql);
             $stmt->bindValue(":uid", $object->uid, PDO::PARAM_INT);
             $this->bindArrayValue($stmt, $attributos);
@@ -119,7 +137,7 @@ class GenericDAO implements IGenericDAO
     }
 
     /**
-     * @see IGenericDAO::delete();
+     * {@inheritDoc}
      */
     public function delete($uid)
     {
@@ -133,7 +151,7 @@ class GenericDAO implements IGenericDAO
                 DB_PASSWORD,
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
             );
-            $sql  = " DELETE FROM "  . SCHEMA . strtolower($this->type) . " where uid = :uid";
+            $sql  = " DELETE FROM "  . SCHEMA . $this->tableName . " where uid = :uid";
             $stmt = $connection->prepare($sql);
             $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
             $stmt->execute();
@@ -152,31 +170,50 @@ class GenericDAO implements IGenericDAO
      * @param array $array : associative array containing the values ​​to bind
      * @param array $typeArray : associative array with the desired value for its corresponding key in $array
      */
-    private function bindArrayValue($query, $array, $typeArray = false)
+    private function bindArrayValue(\PDOStatement $query, $array, $typeArray = false)
     {
-        if (is_object($query) && ($query instanceof PDOStatement)) {
-            foreach ($array as $key => $value) {
-                if ($typeArray) {
-                    $query->bindValue(":$key", $value, $typeArray[$key]);
-                } else {
-                    $valor = $value;
-                    if (is_int($valor)) {
-                        $param = PDO::PARAM_INT;
-                    } elseif (is_bool($valor))
-                        $param = PDO::PARAM_BOOL;
-                    elseif (is_null($valor))
-                        $param = PDO::PARAM_NULL;
-                    elseif (is_string($valor))
-                        $param = PDO::PARAM_STR;
-                    else {
-                        $param = false;
-                    }
-
-                    if ($param) {
-                        $query->bindValue(":$key", $valor, $param);
-                    }
+		foreach ($array as $key => $value) {
+			if ($typeArray) {
+				$query->bindValue(":$key", $value, $typeArray[$key]);
+			} else {
+				$valor = $value;
+             	if (is_int($valor)) {
+                	$param = PDO::PARAM_INT;
+                } elseif (is_bool($valor))
+                	$param = PDO::PARAM_BOOL;
+                elseif (is_null($valor))
+                	$param = PDO::PARAM_NULL;
+                elseif (is_string($valor))
+                	$param = PDO::PARAM_STR;
+                else {
+                	$param = false;
+                }
+                    
+                if ($param) {
+                	$query->bindValue(":$key", $valor, $param);
                 }
             }
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function generate(IDataBaseCreator $creator, $create=false){
+    
+    	$script = $creator->scriptCreation($this->type, true);
+    	
+    	if($create == false){
+    		return $script;
+    	} else {
+    		// TODO extract to method
+	    	try {
+	    		$dbh = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
+	    		$dbh->exec($script);// or die(print_r($dbh->errorInfo(), true));
+	    	} catch (PDOException $e) {
+	    		die("DB ERROR: ". $e->getMessage());
+	    	}
+    	}
     }
 }
