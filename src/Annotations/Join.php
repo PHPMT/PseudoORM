@@ -1,7 +1,10 @@
 <?php
 
+namespace PseudoORM\Annotations;
 
-class Join extends \Annotation {
+use Addendum\Annotation;
+
+class Join extends Annotation {
 	public $joinTable;
 	public $joinColumn;
 }

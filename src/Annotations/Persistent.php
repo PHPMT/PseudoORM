@@ -1,5 +1,8 @@
 <?php
 
+namespace PseudoORM\Annotations;
 
-class Persistent extends \Annotation {}  
+use Addendum\Annotation;
+
+class Persistent extends Annotation {}  
   

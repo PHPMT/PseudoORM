@@ -1,13 +1,6 @@
 <?php
 ini_set("display_errors",1);
 
-// TODO Include it in autoload
-require_once 'libs/addendum/annotations.php';
-require_once 'src/Annotations/Column.php';
-require_once 'src/Annotations/Id.php';
-require_once 'src/Annotations/Table.php';
-require_once 'src/Annotations/Persistent.php';
-
 define("DB_USERNAME", "postgres");
 define("DB_PASSWORD", "postgres");
 define("DB_HOST", 'localhost');
@@ -25,9 +18,7 @@ define('EXCEPTIONS', MODELS . 'exception/');
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
-use PseudoORM\Entity\Perfil;
 
-use Addendum\AnnotationsCollection;
 
 
 $composer_autoload = 'vendor/autoload.php';
@@ -36,6 +27,13 @@ if (false === file_exists($composer_autoload)) {
 }
 
 include $composer_autoload;
+
+require_once 'src/Annotations/Column.php';
+require_once 'src/Annotations/Id.php';
+require_once 'src/Annotations/Table.php';
+require_once 'src/Annotations/Join.php';
+require_once 'src/Annotations/Persistent.php';
+
 
 /**
  * Exemplo de uso

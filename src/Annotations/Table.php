@@ -1,5 +1,8 @@
 <?php
 
+namespace PseudoORM\Annotations;
+
+use Addendum\Annotation;
 
 /** @Target("class") */
-class Table extends \Annotation {}
+class Table extends Annotation {}

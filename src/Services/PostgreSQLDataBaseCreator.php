@@ -16,7 +16,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
      */
 	public final function scriptCreation($entity, $generateDropStatement=false){
 		
-		$classe = new \ReflectionAnnotatedClass($entity);
+		$classe = new ReflectionAnnotatedClass($entity);
     	if(!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
     	} else {
@@ -26,8 +26,6 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	$tabela = $this->tableName;
     	
     	$propriedades = $classe->getProperties();
-
-    	//die(print_r(new Column()));
     	
     	//TODO Refactor me
     	foreach($propriedades as $propriedade){
