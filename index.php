@@ -27,6 +27,9 @@ use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
 use PseudoORM\Entity\Perfil;
 
+use Addendum\AnnotationsCollection;
+
+
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
         throw new RuntimeException('Por favor instalar as dependências do composer.');

@@ -4,7 +4,8 @@ namespace PseudoORM\Services;
 
 use PseudoORM\Services\IDataBaseCreator;
 use PseudoORM\Entity\EntidadeBase;
-use PseudoORM\Annotations;
+
+use Addendum\ReflectionAnnotatedClass;
 
 class PostgreSQLDataBaseCreator implements IDataBaseCreator{
 	
@@ -26,6 +27,8 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	
     	$propriedades = $classe->getProperties();
 
+    	//die(print_r(new Column()));
+    	
     	//TODO Refactor me
     	foreach($propriedades as $propriedade){
     		if($propriedade->hasAnnotation('Column')){

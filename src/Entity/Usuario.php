@@ -1,7 +1,5 @@
 <?php
-
 namespace PseudoORM\Entity;
-
 
 /**
  * @Persistent
@@ -9,7 +7,7 @@ namespace PseudoORM\Entity;
  */
 class Usuario extends EntidadeBase
 {
-		
+	
 	/**
 	 * @Column(name='nome')
 	 */

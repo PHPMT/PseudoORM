@@ -6,6 +6,8 @@ use PseudoORM\Entity\EntidadeBase;
 use PseudoORM\Exception;
 use \PDO;
 
+use Addendum\ReflectionAnnotatedClass;
+
 
 class GenericDAO implements IGenericDAO
 {
@@ -14,13 +16,13 @@ class GenericDAO implements IGenericDAO
 
     public function __construct($type)
     {
-    	$classe = new \ReflectionAnnotatedClass($type);
+    	$classe = new ReflectionAnnotatedClass($type);
         $this->type = $classe->getName();
         $this->setTableName();
     }
 
     private function setTableName(){
-    	$classe = new \ReflectionAnnotatedClass($this->type);
+    	$classe = new ReflectionAnnotatedClass($this->type);
     	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
     	} else {

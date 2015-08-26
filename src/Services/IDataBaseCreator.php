@@ -2,7 +2,6 @@
 
 namespace PseudoORM\Services;
 
-use PseudoORM\Entity\EntidadeBase;
 
 interface IDataBaseCreator {
 	

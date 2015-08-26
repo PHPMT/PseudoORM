@@ -10,7 +10,9 @@
             "email": "mohr.evandro@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "niktux/addendum": "^0.4.4"
+    },
     "autoload": {
         "psr-4": {
             "PseudoORM\\": "src/"
