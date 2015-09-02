@@ -11,11 +11,15 @@
         }
     ],
     "require": {
-        "niktux/addendum": "^0.4.4"
+        "niktux/addendum": "^0.4.4",
+        "phpunit/phpunit": "^4.8"
     },
     "autoload": {
         "psr-4": {
-            "PseudoORM\\": "src/"
+            "PseudoORM\\": [
+                "src/",
+                "test/"
+            ]
         }
     }
 }
