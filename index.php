@@ -1,8 +1,8 @@
 <?php
 ini_set("display_errors",1);
 
-define("DB_USERNAME", "postgres");
-define("DB_PASSWORD", "postgres");
+define("DB_USERNAME", "root");
+define("DB_PASSWORD", "root");
 define("DB_HOST", 'localhost');
 define("DB_PORT", 5432);
 define("DB_NAME", 'meu_db');
