@@ -15,13 +15,12 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
 	/**
      * {@inheritDoc}
      */
-	public final function scriptCreation($entity, $generateDropStatement=false)
+	public final function scriptCreation($entity, $showDropStatment=false)
 	{
 		$classe = new ReflectionAnnotatedClass($entity);
+		$this->tableName = strtolower($classe->getShortName());
     	if (!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != '') {
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
-    	} else {
-    		$this->tableName = strtolower($classe->getShortName());
     	}
        	
     	$tabela = $this->tableName;
@@ -31,7 +30,6 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
     	//TODO Refactor me
     	foreach ($propriedades as $propriedade) {
     		if ($propriedade->hasAnnotation('Column')) {
-    			$getter = $propriedade->name;
     			$key = $propriedade->getAnnotation('Column')->name;
     			$params = (array) $propriedade->getAnnotation('Column');
     			foreach ($params as $chave=>$valor) {
@@ -48,7 +46,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
     
     	$script = '';
     
-    	if ($generateDropStatement == true) {
+    	if ($showDropStatment == true) {
 	    	$script .= "DROP TABLE IF EXISTS ".SCHEMA.$tabela."; \n";
     	}
     	

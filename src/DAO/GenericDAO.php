@@ -27,9 +27,9 @@ class GenericDAO implements IGenericDAO
     	$classe = new ReflectionAnnotatedClass($this->type);
     	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != '') {
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
-    	} else {
-    		$this->tableName = strtolower($classe->getShortName());
+    		return;
     	}
+    	$this->tableName = strtolower($classe->getShortName());
     }
     
     public function create()
@@ -203,6 +203,7 @@ class GenericDAO implements IGenericDAO
 				$query->bindValue(":$key", $value, $typeArray[$key]);
 			} else {
 				$valor = $value;
+				$param = false;
              	if (is_int($valor)) {
                 	$param = PDO::PARAM_INT;
                 } elseif (is_bool($valor)) {
@@ -211,9 +212,7 @@ class GenericDAO implements IGenericDAO
                 	$param = PDO::PARAM_NULL;
                 } elseif (is_string($valor)) {
                 	$param = PDO::PARAM_STR;
-                } else {
-                	$param = false;
-                }
+                } 
                     
                 if ($param) {
                 	$query->bindValue(":$key", $valor, $param);
