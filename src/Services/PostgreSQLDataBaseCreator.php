@@ -7,17 +7,18 @@ use PseudoORM\Entity\EntidadeBase;
 
 use Addendum\ReflectionAnnotatedClass;
 
-class PostgreSQLDataBaseCreator implements IDataBaseCreator{
+class PostgreSQLDataBaseCreator implements IDataBaseCreator
+{
 	
 	protected $tableName;
 	
 	/**
      * {@inheritDoc}
      */
-	public final function scriptCreation($entity, $generateDropStatement=false){
-		
+	public final function scriptCreation($entity, $generateDropStatement=false)
+	{
 		$classe = new ReflectionAnnotatedClass($entity);
-    	if(!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+    	if (!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != '') {
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
     	} else {
     		$this->tableName = strtolower($classe->getShortName());
@@ -28,18 +29,18 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	$propriedades = $classe->getProperties();
     	
     	//TODO Refactor me
-    	foreach($propriedades as $propriedade){
-    		if($propriedade->hasAnnotation('Column')){
+    	foreach ($propriedades as $propriedade) {
+    		if ($propriedade->hasAnnotation('Column')) {
     			$getter = $propriedade->name;
     			$key = $propriedade->getAnnotation('Column')->name;
     			$params = (array) $propriedade->getAnnotation('Column');
-    			foreach($params as $chave=>$valor){
+    			foreach ($params as $chave=>$valor) {
     				$fields[$key][$chave] = $valor;
     			}
     		}
-    		if ($propriedade->hasAnnotation('Join')){
+    		if ($propriedade->hasAnnotation('Join')) {
     			$params = (array) $propriedade->getAnnotation('Join');
-    			foreach($params as $chave=>$valor){
+    			foreach ($params as $chave=>$valor) {
     				$fields[$key][$chave] = $valor;
     			}
     		}
@@ -47,7 +48,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     
     	$script = '';
     
-    	if($generateDropStatement == true){
+    	if ($generateDropStatement == true) {
 	    	$script .= "DROP TABLE IF EXISTS ".SCHEMA.$tabela."; \n";
     	}
     	
@@ -55,14 +56,14 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	$uid;
     
     	// TODO extract to method
-    	foreach($fields as $key=>$value){
+    	foreach ($fields as $key=>$value) {
     		$fk;
-    		if (isset($value['joinTable'])){
+    		if (isset($value['joinTable'])) {
     			$fk = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
     			$fk .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
     			$fk .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
     			$script .= "\t". $key . " integer, \n";
-    		} else if($key == 'uid'){
+    		} elseif ($key == 'uid') {
     			$script .= "\t". $key . " serial NOT NULL, \n";
     			$uid = $key;
     		} else {
@@ -76,5 +77,4 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	
     	return $script;
 	}
-	
 }

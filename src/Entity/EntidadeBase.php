@@ -9,7 +9,8 @@ class EntidadeBase
 	 */
 	protected $uid;
 
-    public static function createFromForm($params){
+    final public static function createFromForm($params) 
+    {
     	foreach ($params as $key => $value) {
     		if (property_exists($this, $key)) {
     			$this->$key = htmlspecialchars($value);
@@ -18,11 +19,13 @@ class EntidadeBase
     }
     
     
-    public function setUID($uid){
+    public function setUID($uid)
+    {
     	$this->uid = $uid;
     }
     
-    public function getUID(){
+    public function getUID()
+    {
     	return $this->uid;
     }
 }

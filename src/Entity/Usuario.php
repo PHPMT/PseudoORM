@@ -35,45 +35,53 @@ class Usuario extends EntidadeBase
 
 	
 	
-	public function getNome(){
+	public function getNome()
+	{
 		return $this->nome;
 	}
 	
-	public function setNome($nome){
+	public function setNome($nome)
+	{
 		$this->nome = $nome;
 	}
 	
-	public function getCpf(){
+	public function getCpf()
+	{
 		return $this->nome;
 	}
 	
-	public function setCpf($cpf){
+	public function setCpf($cpf)
+	{
 		$this->cpf = $cpf;
 	}
 	
-	public function getIdade(){
+	public function getIdade()
+	{
 		return $this->idade;
 	}
 	
-	public function setIdade($idade){
+	public function setIdade($idade)
+	{
 		$this->idade = $idade;
 	}
 	
-	public function getSenha(){
+	public function getSenha()
+	{
 		return $this->senha;
 	}
 	
-	public function setSenha($senha){
+	public function setSenha($senha)
+	{
 		$this->senha = $senha;
 	}
 	
-	public function isAtivo(){
+	public function isAtivo()
+	{
 		return $this->ativo;
 	}
 	
-	public function setAtivo($ativo){
+	public function setAtivo($ativo)
+	{
 		$this->ativo = $ativo;
 	}
-	
-	
 }

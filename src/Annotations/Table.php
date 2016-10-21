@@ -1,5 +1,4 @@
 <?php
-
 namespace PseudoORM\Annotations;
 
 use Addendum\Annotation;

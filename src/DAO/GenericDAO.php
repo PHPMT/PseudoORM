@@ -12,7 +12,8 @@ use Addendum\ReflectionAnnotatedClass;
 class GenericDAO implements IGenericDAO
 {
 
-    protected $type, $tableName;
+    protected $type;
+    protected $tableName;
 
     public function __construct($type)
     {
@@ -21,9 +22,10 @@ class GenericDAO implements IGenericDAO
         $this->setTableName();
     }
 
-    private function setTableName(){
+    private function setTableName()
+    {
     	$classe = new ReflectionAnnotatedClass($this->type);
-    	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+    	if($classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != '') {
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
     	} else {
     		$this->tableName = strtolower($classe->getShortName());
@@ -40,7 +42,12 @@ class GenericDAO implements IGenericDAO
      */
     public function getById($uid)
     {
-        $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
+    	$connection = new PDO(
+    			DB_DSN,
+    			DB_USERNAME,
+    			DB_PASSWORD,
+    			array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
+    	);
         $sql  = " SELECT * FROM "  . SCHEMA . strtolower($this->type) ." where uid = :uid";
         $stmt = $connection->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
@@ -56,10 +63,13 @@ class GenericDAO implements IGenericDAO
      */
     public function getList($sortColumn = null, $sortOrder = 'ASC', $limit = 1000000, $offset = 0)
     {
-        $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
-        $sql  = " SELECT * FROM "  .
-            SCHEMA .
-            $this->tableName .
+    	$connection = new PDO(
+    			DB_DSN,
+    			DB_USERNAME,
+    			DB_PASSWORD,
+    			array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
+    	);
+    	$sql  = " SELECT * FROM " . SCHEMA . $this->tableName .
             ($sortColumn != null ? " ORDER BY $sortColumn $sortOrder " : '') .
             " LIMIT :limit OFFSET :offset; ";
         $stmt = $connection->prepare($sql);
@@ -77,23 +87,25 @@ class GenericDAO implements IGenericDAO
      */
     public function insert(EntidadeBase $object)
     {
-        $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
-        
+    	$connection = new PDO(
+    			DB_DSN,
+    			DB_USERNAME,
+    			DB_PASSWORD,
+    			array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
+    	);
         //TODO extract to a method. Too much responsability
         $obj = new \ReflectionObject($object);
         $parametros = array();
         $attributos = array();
-        foreach ($obj->getProperties() as $property){
+        foreach ($obj->getProperties() as $property) {
         	$property->setAccessible(true);
         	if ($property->name != 'uid' && ($property->getValue($object) != '')) {
 	        	$attributos[$property->name] = $property->getValue($object);
       			$parametros[] = ":".$property->name;
         	}
-        	
         }
         
         $queryParams = "(".implode(", ", array_keys($attributos)).") VALUES(". implode(', ', $parametros) ." )";
-       // die(print_r($queryParams));
         try {
             $sql  = " INSERT INTO "  . SCHEMA . $this->tableName . " $queryParams RETURNING uid;";
             $stmt = $connection->prepare($sql);
@@ -116,8 +128,12 @@ class GenericDAO implements IGenericDAO
      */
     public function update(EntidadeBase $object)
     {
-        $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
-
+        $connection = new PDO(
+        		DB_DSN,
+        		DB_USERNAME,
+        		DB_PASSWORD,
+        		array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION )
+        );
     	//TODO extract to a method. Too much responsability
         $obj = new \ReflectionObject($object);
         $parametros = array();
@@ -128,8 +144,8 @@ class GenericDAO implements IGenericDAO
 	        	$attributos[] = $property->name;
       			$parametros[] = ":".$property->name;
         	}
-        	
         }
+        
         $queryParams = implode(', ', $parametros);
 
         try {
@@ -182,7 +198,6 @@ class GenericDAO implements IGenericDAO
      */
     private function bindArrayValue(\PDOStatement $query, $array, $typeArray = false)
     {
-    	//die(print_r($array));
 		foreach ($array as $key => $value) {
 			if ($typeArray) {
 				$query->bindValue(":$key", $value, $typeArray[$key]);
@@ -190,13 +205,13 @@ class GenericDAO implements IGenericDAO
 				$valor = $value;
              	if (is_int($valor)) {
                 	$param = PDO::PARAM_INT;
-                } elseif (is_bool($valor))
+                } elseif (is_bool($valor)) {
                 	$param = PDO::PARAM_BOOL;
-                elseif (is_null($valor))
+                } elseif (is_null($valor)) {
                 	$param = PDO::PARAM_NULL;
-                elseif (is_string($valor))
+                } elseif (is_string($valor)) {
                 	$param = PDO::PARAM_STR;
-                else {
+                } else {
                 	$param = false;
                 }
                     
@@ -211,11 +226,11 @@ class GenericDAO implements IGenericDAO
     /**
      * {@inheritDoc}
      */
-    public function generate(IDataBaseCreator $creator, $create=false){
-    
+    public function generate(IDataBaseCreator $creator, $create=false)
+    {
     	$script = $creator->scriptCreation($this->type, true);
     	
-    	if($create == false){
+    	if($create == false) {
     		return $script;
     	} else {
     		// TODO extract to method
