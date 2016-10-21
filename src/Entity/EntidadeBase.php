@@ -7,19 +7,22 @@ class EntidadeBase
 	 * @Id
 	 * @Column(name='uid')
 	 */
-	public $uid;
+	protected $uid;
 
-    /**
-     * Utilizado para criar entidade com base nos campos do formulário.
-     *
-     * @param unknown $params
-     */
-    public function storeFormValues($params)
-    {
-        foreach ($params as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = htmlspecialchars($value);
-            }
-        }
+    public static function createFromForm($params){
+    	foreach ($params as $key => $value) {
+    		if (property_exists($this, $key)) {
+    			$this->$key = htmlspecialchars($value);
+    		}
+    	}
+    }
+    
+    
+    public function setUID($uid){
+    	$this->uid = $uid;
+    }
+    
+    public function getUID(){
+    	return $this->uid;
     }
 }

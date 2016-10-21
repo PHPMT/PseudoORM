@@ -78,16 +78,22 @@ class GenericDAO implements IGenericDAO
     public function insert(EntidadeBase $object)
     {
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION  ));
-        $attributos = (array) $object;
+        
+        //TODO extract to a method. Too much responsability
+        $obj = new \ReflectionObject($object);
         $parametros = array();
-        foreach ($attributos as $k => $v) {
-            if ($k != 'uid' && ($v != '')) {
-                $parametros[] = ":$k";
-            } else {
-                unset($attributos[$k]);
-            }
+        $attributos = array();
+        foreach ($obj->getProperties() as $property){
+        	$property->setAccessible(true);
+        	if ($property->name != 'uid' && ($property->getValue($object) != '')) {
+	        	$attributos[$property->name] = $property->getValue($object);
+      			$parametros[] = ":".$property->name;
+        	}
+        	
         }
+        
         $queryParams = "(".implode(", ", array_keys($attributos)).") VALUES(". implode(', ', $parametros) ." )";
+       // die(print_r($queryParams));
         try {
             $sql  = " INSERT INTO "  . SCHEMA . $this->tableName . " $queryParams RETURNING uid;";
             $stmt = $connection->prepare($sql);
@@ -111,14 +117,18 @@ class GenericDAO implements IGenericDAO
     public function update(EntidadeBase $object)
     {
         $connection = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
-        $attributos = (array) $object;
+
+    	//TODO extract to a method. Too much responsability
+        $obj = new \ReflectionObject($object);
         $parametros = array();
-        foreach ($attributos as $k => $v) {
-            if ($k != 'uid' && ($v != '')) {
-                $parametros[] = "$k = :$k";
-            } else {
-                unset($attributos[$k]);
-            }
+        $attributos = array();
+        foreach ($obj->getProperties() as $property){
+        	$property->setAccessible(true);
+        	if ($property->name != 'uid' && ($property->getValue($object) != '')) {
+	        	$attributos[] = $property->name;
+      			$parametros[] = ":".$property->name;
+        	}
+        	
         }
         $queryParams = implode(', ', $parametros);
 
@@ -172,6 +182,7 @@ class GenericDAO implements IGenericDAO
      */
     private function bindArrayValue(\PDOStatement $query, $array, $typeArray = false)
     {
+    	//die(print_r($array));
 		foreach ($array as $key => $value) {
 			if ($typeArray) {
 				$query->bindValue(":$key", $value, $typeArray[$key]);
