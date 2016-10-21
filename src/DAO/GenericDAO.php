@@ -237,7 +237,7 @@ class GenericDAO implements IGenericDAO
 	    		$dbh = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
 	    		$dbh->exec($script);// or die(print_r($dbh->errorInfo(), true));
 	    	} catch (PDOException $e) {
-	    		die("DB ERROR: ". $e->getMessage());
+	    		echo ("DB ERROR: ". $e->getMessage());
 	    	}
     	}
     }
