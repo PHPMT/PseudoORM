@@ -3,7 +3,6 @@
 namespace PseudoORM\Services;
 
 use PseudoORM\Services\IDataBaseCreator;
-use PseudoORM\Entity\EntidadeBase;
 
 use Addendum\ReflectionAnnotatedClass;
 
@@ -25,24 +24,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
        	
     	$tabela = $this->tableName;
     	
-    	$propriedades = $classe->getProperties();
-    	
-    	//TODO Refactor me
-    	foreach ($propriedades as $propriedade) {
-    		if ($propriedade->hasAnnotation('Column')) {
-    			$key = $propriedade->getAnnotation('Column')->name;
-    			$params = (array) $propriedade->getAnnotation('Column');
-    			foreach ($params as $chave=>$valor) {
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
-    		if ($propriedade->hasAnnotation('Join')) {
-    			$params = (array) $propriedade->getAnnotation('Join');
-    			foreach ($params as $chave=>$valor) {
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
-    	}
+    	$fields = generateFields($classe->getProperties());
     
     	$script = '';
     
@@ -55,11 +37,11 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
     
     	// TODO extract to method
     	foreach ($fields as $key=>$value) {
-    		$fk;
+    		$fkMapStatement;
     		if (isset($value['joinTable'])) {
-    			$fk = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
-    			$fk .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
-    			$fk .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
+    			$fkMapStatement = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
+    			$fkMapStatement .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
+    			$fkMapStatement .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
     			$script .= "\t". $key . " integer, \n";
     		} elseif ($key == 'uid') {
     			$script .= "\t". $key . " serial NOT NULL, \n";
@@ -69,10 +51,31 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
     			$script .= "\t". $key . " " . ($value['type'] == 'integer' ? 'integer' : ($value['type'] == 'timestamp' ? 'timestamp' : 'character varying')) . ", \n";
     		}
     	}
-    	$script .= @$fk;
+    	$script .= @$fkMapStatement;
     	$script .= "\tCONSTRAINT ".$tabela."_pk PRIMARY KEY (".$uid.") \n";
     	$script .= " );";
     	
     	return $script;
+	}
+	
+	
+	private function generateFields($propriedades)
+	{
+		foreach ($propriedades as $propriedade) {
+			if ($propriedade->hasAnnotation('Column')) {
+				$key = $propriedade->getAnnotation('Column')->name;
+				$params = (array) $propriedade->getAnnotation('Column');
+				foreach ($params as $chave=>$valor) {
+					$fields[$key][$chave] = $valor;
+				}
+			}
+			if ($propriedade->hasAnnotation('Join')) {
+				$params = (array) $propriedade->getAnnotation('Join');
+				foreach ($params as $chave=>$valor) {
+					$fields[$key][$chave] = $valor;
+				}
+			}
+			return $fields;
+		}
 	}
 }
