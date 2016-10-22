@@ -24,7 +24,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
        	
     	$tabela = $this->tableName;
     	
-    	$fields = generateFields($classe->getProperties());
+    	$fields = $this->generateFields($classe->getProperties());
     
     	$script = '';
     
