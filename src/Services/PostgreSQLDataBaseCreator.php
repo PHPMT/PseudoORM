@@ -75,7 +75,7 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator
 					$fields[$key][$chave] = $valor;
 				}
 			}
-			return $fields;
 		}
+		return $fields;
 	}
 }
