@@ -4,7 +4,6 @@ namespace PseudoORM\DAO;
 use PseudoORM\Entity\EntidadeBase;
 use PseudoORM\Services\IDataBaseCreator;
 
-
 interface IGenericDAO
 {
 
@@ -48,5 +47,5 @@ interface IGenericDAO
      * Gera script de criação do banco de dados e permite a criação automatica.
      * @param bolean $create True to create database automatically | False To print script in screen
      */
-    public function generate(IDataBaseCreator $creator, $create=false);
+    public function generate(IDataBaseCreator $creator, $create = false);
 }
