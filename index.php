@@ -1,5 +1,5 @@
 <?php
-ini_set("display_errors",1);
+ini_set("display_errors", 1);
 
 define("DB_USERNAME", "postgres");
 define("DB_PASSWORD", "postgres");
@@ -18,8 +18,6 @@ define('EXCEPTIONS', MODELS . 'exception/');
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
-
-
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {

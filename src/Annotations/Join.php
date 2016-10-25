@@ -3,8 +3,8 @@ namespace PseudoORM\Annotations;
 
 use Addendum\Annotation;
 
-class Join extends Annotation 
+class Join extends Annotation
 {
-	public $joinTable;
-	public $joinColumn;
+    public $joinTable;
+    public $joinColumn;
 }
