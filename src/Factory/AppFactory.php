@@ -7,7 +7,7 @@ use \Exception;
 
 class AppFactory
 {
-    private static $intance;
+    private static $instance;
 
     /**
      * Set the factory instance for DI
@@ -15,7 +15,7 @@ class AppFactory
      */
     public static function setFactory(AppDaoFactory $factory)
     {
-        self::$intance = $factory;
+        self::$instance = $factory;
     }
 
     /**
@@ -24,11 +24,11 @@ class AppFactory
      */
     public static function getFactory()
     {
-        if (!self::$intance) {
-            self::$intance = new self;
+        if (!self::$instance) {
+            self::$instance = new self;
         }
 
-        return self::$intance;
+        return self::$instance;
     }
 
     public static function getRepository(EntidadeBase $objeto)
