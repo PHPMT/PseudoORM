@@ -11,26 +11,77 @@ class Usuario extends EntidadeBase
 	/**
 	 * @Column(name='nome')
 	 */
-	public $nome="";
+	private $nome="";
 	
 	/**
 	 * @Column(name='cpf')
 	 */
-	public $cpf="";
+	private $cpf="";
 	 
 	/**
 	 * @Column(name='idade', type='integer')
 	 */
-	public $idade=0;
+	private $idade=0;
 	 
 	/**
 	 * @Column(name='senha')
 	 */
-	public $senha="";
+	private $senha="";
 	 
 	/**
 	 * @Column(name='ativo', type='boolean')
 	 */
-	public $ativo=false;
+	private $ativo=false;
 
+	
+	
+	public function getNome()
+	{
+		return $this->nome;
+	}
+	
+	public function setNome($nome)
+	{
+		$this->nome = $nome;
+	}
+	
+	public function getCpf()
+	{
+		return $this->nome;
+	}
+	
+	public function setCpf($cpf)
+	{
+		$this->cpf = $cpf;
+	}
+	
+	public function getIdade()
+	{
+		return $this->idade;
+	}
+	
+	public function setIdade($idade)
+	{
+		$this->idade = $idade;
+	}
+	
+	public function getSenha()
+	{
+		return $this->senha;
+	}
+	
+	public function setSenha($senha)
+	{
+		$this->senha = $senha;
+	}
+	
+	public function isAtivo()
+	{
+		return $this->ativo;
+	}
+	
+	public function setAtivo($ativo)
+	{
+		$this->ativo = $ativo;
+	}
 }

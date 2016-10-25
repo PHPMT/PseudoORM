@@ -3,51 +3,32 @@
 namespace PseudoORM\Services;
 
 use PseudoORM\Services\IDataBaseCreator;
-use PseudoORM\Entity\EntidadeBase;
 
 use Addendum\ReflectionAnnotatedClass;
 
-class PostgreSQLDataBaseCreator implements IDataBaseCreator{
+class PostgreSQLDataBaseCreator implements IDataBaseCreator
+{
 	
 	protected $tableName;
 	
 	/**
      * {@inheritDoc}
      */
-	public final function scriptCreation($entity, $generateDropStatement=false){
-		
+	public final function scriptCreation($entity, $showDropStatment=false)
+	{
 		$classe = new ReflectionAnnotatedClass($entity);
-    	if(!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != ''){
+		$this->tableName = strtolower($classe->getShortName());
+    	if (!$classe->hasAnnotation('Table') && $classe->getAnnotation('Table') != '') {
     		$this->tableName = strtolower($classe->getAnnotation('Table')->value);
-    	} else {
-    		$this->tableName = strtolower($classe->getShortName());
     	}
        	
     	$tabela = $this->tableName;
     	
-    	$propriedades = $classe->getProperties();
-    	
-    	//TODO Refactor me
-    	foreach($propriedades as $propriedade){
-    		if($propriedade->hasAnnotation('Column')){
-    			$getter = $propriedade->name;
-    			$key = $propriedade->getAnnotation('Column')->name;
-    			$params = (array) $propriedade->getAnnotation('Column');
-    			foreach($params as $chave=>$valor){
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
-    		if ($propriedade->hasAnnotation('Join')){
-    			$params = (array) $propriedade->getAnnotation('Join');
-    			foreach($params as $chave=>$valor){
-    				$fields[$key][$chave] = $valor;
-    			}
-    		}
-    	}
+    	$fields = $this->generateFields($classe->getProperties());
     
     	$script = '';
     
-    	if($generateDropStatement == true){
+    	if ($showDropStatment == true) {
 	    	$script .= "DROP TABLE IF EXISTS ".SCHEMA.$tabela."; \n";
     	}
     	
@@ -55,14 +36,14 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     	$uid;
     
     	// TODO extract to method
-    	foreach($fields as $key=>$value){
-    		$fk;
-    		if (isset($value['joinTable'])){
-    			$fk = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
-    			$fk .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
-    			$fk .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
+    	foreach ($fields as $key=>$value) {
+    		$fkMapStatement;
+    		if (isset($value['joinTable'])) {
+    			$fkMapStatement = "\tCONSTRAINT ".$tabela."_".$value['joinTable']."_fk FOREIGN KEY($key)\n";
+    			$fkMapStatement .= "\t\tREFERENCES ".SCHEMA.$value['joinTable']."($value[joinColumn]) MATCH SIMPLE\n";
+    			$fkMapStatement .= "\t\tON UPDATE NO ACTION ON DELETE NO ACTION,\n";
     			$script .= "\t". $key . " integer, \n";
-    		} else if($key == 'uid'){
+    		} elseif ($key == 'uid') {
     			$script .= "\t". $key . " serial NOT NULL, \n";
     			$uid = $key;
     		} else {
@@ -70,11 +51,31 @@ class PostgreSQLDataBaseCreator implements IDataBaseCreator{
     			$script .= "\t". $key . " " . ($value['type'] == 'integer' ? 'integer' : ($value['type'] == 'timestamp' ? 'timestamp' : 'character varying')) . ", \n";
     		}
     	}
-    	$script .= @$fk;
+    	$script .= @$fkMapStatement;
     	$script .= "\tCONSTRAINT ".$tabela."_pk PRIMARY KEY (".$uid.") \n";
     	$script .= " );";
     	
     	return $script;
 	}
 	
+	
+	private function generateFields($propriedades)
+	{
+		foreach ($propriedades as $propriedade) {
+			if ($propriedade->hasAnnotation('Column')) {
+				$key = $propriedade->getAnnotation('Column')->name;
+				$params = (array) $propriedade->getAnnotation('Column');
+				foreach ($params as $chave=>$valor) {
+					$fields[$key][$chave] = $valor;
+				}
+			}
+			if ($propriedade->hasAnnotation('Join')) {
+				$params = (array) $propriedade->getAnnotation('Join');
+				foreach ($params as $chave=>$valor) {
+					$fields[$key][$chave] = $valor;
+				}
+			}
+		}
+		return $fields;
+	}
 }

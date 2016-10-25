@@ -1,8 +1,8 @@
 <?php
 ini_set("display_errors",1);
 
-define("DB_USERNAME", "root");
-define("DB_PASSWORD", "root");
+define("DB_USERNAME", "postgres");
+define("DB_PASSWORD", "postgres");
 define("DB_HOST", 'localhost');
 define("DB_PORT", 5432);
 define("DB_NAME", 'meu_db');
@@ -42,14 +42,16 @@ require_once 'src/Annotations/Persistent.php';
 $dao = AppFactory::getRepository(new Usuario());
 
 // USe para gerar o script de criação do banco
-echo $dao->generate(new PostgreSQLDataBaseCreator());
+echo '<pre>'.$dao->generate(new PostgreSQLDataBaseCreator()).'</pre>';
+
+
 
 // Realizar operações básicas
 $usuario = $dao->create();
-$usuario->nome = 'Zé da Silva';
-$usuario->idade = 25;
-$usuario->cpf = '000555111';
-$usuario->senha  = '123456';
+$usuario->setNome('Zé da Silva');
+$usuario->setIdade(25);
+$usuario->setCpf('000555111');
+$usuario->setSenha('123456');
 
 $dao->insert($usuario);
 
@@ -58,5 +60,5 @@ $usuarios = $dao->getList();
 
 echo "<Br><Br>";
 foreach ($usuarios as $usuario) {
-    echo $usuario->nome.'<br>';
+    echo $usuario->getNome().'<br>';
 }
