@@ -18,7 +18,11 @@ define('EXCEPTIONS', MODELS . 'exception/');
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
-use PseudoORM\Annotations;
+use PseudoORM\Annotations\Id;
+use PseudoORM\Annotations\Column;
+use PseudoORM\Annotations\Join;
+use PseudoORM\Annotations\Persistent;
+use PseudoORM\Annotations\Table;
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
