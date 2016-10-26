@@ -18,6 +18,7 @@ define('EXCEPTIONS', MODELS . 'exception/');
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
+use PseudoORM\Annotations;
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
@@ -25,14 +26,6 @@ if (false === file_exists($composer_autoload)) {
 }
 
 include $composer_autoload;
-
-require_once 'src/Annotations/Column.php';
-require_once 'src/Annotations/Id.php';
-require_once 'src/Annotations/Table.php';
-require_once 'src/Annotations/Join.php';
-require_once 'src/Annotations/Persistent.php';
-
-
 /**
  * Exemplo de uso
  */
