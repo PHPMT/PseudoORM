@@ -2,10 +2,10 @@
 ini_set("display_errors", 1);
 
 define("DB_USERNAME", "postgres");
-define("DB_PASSWORD", "postgres");
+define("DB_PASSWORD", "password");
 define("DB_HOST", 'localhost');
 define("DB_PORT", 5432);
-define("DB_NAME", 'meu_db');
+define("DB_NAME", 'project');
 define("SCHEMA", '');
 define('ENCODING', "SET NAMES 'utf8';");
 define("DB_DSN", "pgsql:host=".DB_HOST.";port=".DB_PORT.";dbname=".DB_NAME.";");
@@ -21,7 +21,7 @@ use PseudoORM\Services\PostgreSQLDataBaseCreator;
 
 $composer_autoload = 'vendor/autoload.php';
 if (false === file_exists($composer_autoload)) {
-        throw new RuntimeException('Por favor instalar as dependências do composer.');
+      throw new RuntimeException('Por favor instalar as dependências do composer.');
 }
 
 include $composer_autoload;
