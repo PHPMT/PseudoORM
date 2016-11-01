@@ -1,0 +1,38 @@
+version: '2'
+
+volumes:
+  postgres-data:
+    driver: local
+
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - .:/src
+            - ./docker/nginx:/etc/nginx/conf.d
+        links:
+            - php
+    php:
+        build: ./docker/
+        links:
+            - postgres
+        volumes_from:
+            - app
+    app:
+        image: php:7-fpm
+        volumes:
+            - .:/src
+        command: "true"
+    postgres:
+        image: postgres:9.6
+        container_name: postgres
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        ports:
+          - "5432:5432"
+        environment:
+          - POSTGRES_PASSWORD=root
+          - POSTGRES_DB=pseudoorm
+          - POSTGRES_USER=root
