@@ -1,46 +1,47 @@
-nginx:
-    build: ./nginx/
-    ports:
+version: '2'
+services:
+  nginx:
+      build: ./nginx/
+      ports:
         - 8081:80
-    links:
+      links:
         - php
-    volumes_from:
+      volumes_from:
         - app
 
-php:
-    build: ./php/
-    expose:
+  php:
+      build: ./php/
+      expose:
         - 9000
-    links:
+      links:
         - postgres
-    volumes_from:
+      volumes_from:
         - app
 
-app:
-    image: php:7.0-fpm
-    volumes:
+  app:
+      image: php:7.0-fpm
+      volumes:
         - .:/var/www/html
-    command: "true"
+      command: "true"
 
-postgres:
-    build: ./postgres/
-    volumes_from:
+  postgres:
+     build: ./postgres/
+     volumes_from:
         - data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: project
+     environment:
+       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: password
+       POSTGRES_DB: project
 
-data:
-    build: ./postgres/
-    volumes:
+  data:
+     build: ./postgres/
+     volumes:
       - /var/lib/postgresql/data
-    command: "true"
+     command: "true"
 
-composer:
-    entrypoint: /bin/true
-    restart: 'no'
-    build: ./composer/
-    command: install --working-dir=/var/www/html
-    volumes_from:
-      - app
+  composer:
+     image: composer/composer:alpine
+     volumes:
+       - .:/var/www/html
+     command: install
+     working_dir: /var/www/html
