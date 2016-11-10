@@ -1,0 +1,1 @@
+FROM kiasaki/alpine-postgres
