@@ -9,3 +9,5 @@ RUN buildDeps="libpq-dev libzip-dev libicu-dev" && \
         pdo_pgsql \
         mbstring \
         intl
+
+WORKDIR /src

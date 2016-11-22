@@ -2,7 +2,7 @@
 <phpunit bootstrap="vendor/autoload.php"
     colors="true">
     <php>
-        <env name="db_host" value="localhost"/>
+        <env name="db_host" value="postgres"/>
         <env name="db_username" value="root"/>
         <env name="db_password" value="root"/>
     </php>
