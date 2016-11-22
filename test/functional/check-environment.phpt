@@ -4,9 +4,9 @@ Confirmando se o ambiente está funcionando.
 <?php
 require 'vendor/autoload.php';
 
-define("DB_USERNAME", "root");
-define("DB_PASSWORD", "root");
-define("DB_HOST", 'localhost');
+define("DB_USERNAME", getenv('db_username'));
+define("DB_PASSWORD", getenv('db_password'));
+define("DB_HOST", getenv('db_host'));
 define("DB_PORT", 5432);
 define("DB_NAME", 'pseudoorm');
 define("SCHEMA", '');
