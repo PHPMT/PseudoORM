@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php"
     colors="true">
-    <testsuites>
-        <testsuite name="PseudoORM Test Suite">
-            <directory>test</directory>
-        </testsuite>
-    </testsuites>
+    <testsuite name="PseudoORM Test Suite">
+        <directory>test</directory>
+    </testsuite>
+    <testsuite name="PseudoORM Test Functional Tests">
+        <directory suffix=".phpt">test/functional</directory>
+    </testsuite>
     <logging>
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
     </logging>
