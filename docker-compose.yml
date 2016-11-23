@@ -15,6 +15,7 @@ services:
         links:
             - php
     php:
+        container_name: pseudoorm
         build: ./docker/
         links:
             - postgres
