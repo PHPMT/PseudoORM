@@ -1,11 +1,11 @@
 <?php
 ini_set("display_errors", 1);
 
-define("DB_USERNAME", "postgres");
-define("DB_PASSWORD", "postgres");
-define("DB_HOST", 'localhost');
+define("DB_USERNAME", "root");
+define("DB_PASSWORD", "root");
+define("DB_HOST", 'postgres');
 define("DB_PORT", 5432);
-define("DB_NAME", 'meu_db');
+define("DB_NAME", 'pseudoorm');
 define("SCHEMA", '');
 define('ENCODING', "SET NAMES 'utf8';");
 define("DB_DSN", "pgsql:host=".DB_HOST.";port=".DB_PORT.";dbname=".DB_NAME.";");
@@ -40,9 +40,7 @@ require_once 'src/Annotations/Persistent.php';
 $dao = AppFactory::getRepository(new Usuario());
 
 // USe para gerar o script de criação do banco
-echo '<pre>'.$dao->generate(new PostgreSQLDataBaseCreator()).'</pre>';
-
-
+echo '<pre>'.$dao->generate(new PostgreSQLDataBaseCreator(), true).'</pre>';
 
 // Realizar operações básicas
 $usuario = $dao->create();
