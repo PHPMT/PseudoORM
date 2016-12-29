@@ -2,7 +2,6 @@
 namespace PseudoORM\Factory;
 
 use PseudoORM\Entity\EntidadeBase;
-use PseudoORM\DAO\GenericDAO;
 use \Exception;
 
 class AppFactory
@@ -33,17 +32,18 @@ class AppFactory
 
     public static function getRepository(EntidadeBase $objeto)
     {
-        try {
-            $class = get_class($objeto);
-            $respositoryPath = DAOS . $class . 'DAO.php';
-            if (!file_exists($respositoryPath)) {
-                return new GenericDAO($class);
-            }
-            require_once $respositoryPath;
-            $repository = $class . 'DAO';
-            return new $repository;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        $class = get_class($objeto);
+        $classShortName = (new \ReflectionClass($objeto))->getShortName();
+
+        $classDAO = '\\PseudoORM\\DAO\\' . $classShortName . 'DAO';
+
+        $entityName = class_exists($classDAO)
+            ? $classShortName
+            : 'Generic'
+        ;
+
+        $repository = '\\PseudoORM\\DAO\\' . $entityName . 'DAO';
+
+        return new $repository($class);
     }
 }

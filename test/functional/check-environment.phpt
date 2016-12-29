@@ -14,10 +14,6 @@ define('ENCODING', "SET NAMES 'utf8';");
 define("DB_DSN", "pgsql:host=".DB_HOST.";port=".DB_PORT.";dbname=".DB_NAME.";");
 define("SHOW_SQL_ERROR", PDO::ERRMODE_EXCEPTION);
 
-define('MODELS', '../app/models/');
-define('DAOS', MODELS . 'DAO/impl/');
-define('EXCEPTIONS', MODELS . 'exception/');
-
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
 use PseudoORM\Services\PostgreSQLDataBaseCreator;
