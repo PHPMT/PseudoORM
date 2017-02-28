@@ -1,5 +1,4 @@
 version: '2'
-
 volumes:
   postgres-data:
     driver: local
@@ -22,6 +21,7 @@ services:
         volumes_from:
             - app
     app:
+        container_name: phpfpm
         image: php:7-fpm
         volumes:
             - .:/src
