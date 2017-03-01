@@ -3,7 +3,6 @@ composer:
 
 phpunit:
 	docker exec -it pseudoorm ./vendor/bin/phpunit
-#	docker exec -it app ./vendor/bin/phpunit
 
 docker.run:
 	docker-compose up -d
