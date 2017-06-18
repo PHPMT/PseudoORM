@@ -25,7 +25,7 @@ class EntidadeBase
 
     public function getClass()
     {
-        return (new \ReflectionClass($objeto))->getName();
+        return (new \ReflectionClass($this))->getName();
     } 
     
     

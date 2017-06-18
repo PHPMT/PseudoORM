@@ -37,7 +37,7 @@ class AppFactory
         if(class_exists($repository))
             return new $repository($objeto->getClass());
 
-        return new GenericDAO((new \ReflectionClass($objeto))->getName());
+        return new GenericDAO($objeto->getClass());
     }
 
 }
