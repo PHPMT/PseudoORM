@@ -20,7 +20,7 @@ define("SHOW_SQL_ERROR", PDO::ERRMODE_EXCEPTION);
 
 use PseudoORM\Entity\Usuario;
 use PseudoORM\Factory\AppFactory;
-use PseudoORM\Services\PostgreSQLDataBaseCreator;
+use PseudoORM\Services\PostgreSQLDatabaseCreator;
 
 require_once 'src/Annotations/Column.php';
 require_once 'src/Annotations/Id.php';
@@ -36,7 +36,7 @@ require_once 'src/Annotations/Persistent.php';
 $dao = AppFactory::getRepository(new Usuario());
 
 // USe para gerar o script de criação do banco
-$dao->criaBancoDeDados(new PostgreSQLDataBaseCreator());
+$dao->criaBancoDeDados(new PostgreSQLDatabaseCreator());
 
 // Realizar operações básicas
 $usuario = $dao->create();
