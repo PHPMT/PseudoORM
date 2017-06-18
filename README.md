@@ -25,7 +25,7 @@ Para modificar o comportamento padrão, basta criar um Arquivo de persistencia e
 $dao = AppFactory::getRepository(new Usuario());
 
 // Gera script para criação do banco
-echo $dao->generate(new PseudoORM\Services\PostgreSQLDataBaseCreator());
+echo $dao->criaBancoDeDados(new PseudoORM\Services\PostgreSQLDataBaseCreator());
 
 // Criar um usuário
 $usuario = $dao->create();
