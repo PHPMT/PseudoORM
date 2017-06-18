@@ -36,7 +36,7 @@ require_once 'src/Annotations/Persistent.php';
 $dao = AppFactory::getRepository(new Usuario());
 
 // USe para gerar o script de criação do banco
-$dao->generate(new PostgreSQLDataBaseCreator(), true);
+$dao->criaBancoDeDados(new PostgreSQLDataBaseCreator());
 
 // Realizar operações básicas
 $usuario = $dao->create();
