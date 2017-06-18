@@ -33,13 +33,11 @@ class AppFactory
 
     public static function getRepository(EntidadeBase $objeto)
     {
-        $classShortName = (new \ReflectionClass($objeto))->getShortName();
-
-        $repository = '\\PseudoORM\\DAO\\' . $classShortName . 'DAO';
-
+        $repository = '\\PseudoORM\\DAO\\' . $objeto->getClassShortName() . 'DAO';
         if(class_exists($repository))
-            return new $repository((new \ReflectionClass($objeto))->getName());
+            return new $repository($objeto->getClass());
 
         return new GenericDAO((new \ReflectionClass($objeto))->getName());
     }
+
 }
