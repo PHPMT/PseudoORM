@@ -11,6 +11,10 @@ define("DB_PORT", 5432);
 define("DB_NAME", 'pseudoorm');
 define("SCHEMA", '');
 define('ENCODING', "SET NAMES 'utf8';");
+
+/**
+ * @todo Remover constantes
+ */
 define("DB_DSN", "pgsql:host=".DB_HOST.";port=".DB_PORT.";dbname=".DB_NAME.";");
 define("SHOW_SQL_ERROR", PDO::ERRMODE_EXCEPTION);
 
