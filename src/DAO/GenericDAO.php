@@ -1,7 +1,7 @@
 <?php
 namespace PseudoORM\DAO;
 
-use PseudoORM\Services\IDataBaseCreator;
+use PseudoORM\Services\IDatabaseCreator;
 use PseudoORM\Entity\EntidadeBase;
 use PseudoORM\Exception;
 use \PDO;
@@ -224,20 +224,21 @@ class GenericDAO implements IGenericDAO
     /**
      * {@inheritDoc}
      */
-    public function generate(IDataBaseCreator $creator, $create = false)
+    public function geraScriptDeCriacaoDoBancoDeDados(IDatabaseCreator $creator)
     {
         $script = $creator->scriptCreation($this->type, true);
         
-        if ($create == false) {
-            return $script;
-        } else {
-            // TODO extract to method
-            try {
-                $dbh = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
-                $dbh->exec($script);// or die(print_r($dbh->errorInfo(), true));
-            } catch (PDOException $e) {
-                echo ("DB ERROR: ". $e->getMessage());
-            }
+        return $script;
+    }
+
+    public function criaBancoDeDados(IDatabaseCreator $creator)
+    {
+        $script = $this->geraScriptDeCriacaoDoBancoDeDados($creator);
+        try {
+            $dbh = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
+            $dbh->exec($script);
+        } catch (PDOException $e) {
+            echo ("DB ERROR: ". $e->getMessage());
         }
     }
 }
