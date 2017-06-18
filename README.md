@@ -10,7 +10,7 @@ App de persistência Genérica para fins didáticos usando a interface do PDO.
  * ``` git clone https://github.com/PHPMT/PseudoORM ```
  * Altere as configurações do banco no arquivo `index.php` que é apenas um arquivo de exemplo.
 
-Para criar novas classes, basta criar uma entidade na pasta `model/Entity/` extendendo da classe `EntidadeBase` e criar a respectiva tabela no banco de dados, e está pronto para usar.
+Para criar novas classes, basta criar uma entidade na pasta `model/Entity/` extendendo da classe `EntidadeBase` e criar a respectiva tabela no banco de dados (ou deixar o framework criar automaticamente), e está pronto para usar.
 
 Para modificar o comportamento padrão, basta criar um Arquivo de persistencia extendendo a classe `GenericDAO` dentro da pasta `DAO/impl` podendo sobrescrever métodos existentes e/ou adicionar novos.
 
