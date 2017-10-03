@@ -44,8 +44,12 @@ interface IGenericDAO
     public function update(EntidadeBase $entidade);
     
     /**
-     * Gera script de criação do banco de dados e permite a criação automatica.
-     * @param bolean $create True to create database automatically | False To print script in screen
+     * Retorna script de criação do banco de dados.
      */
-    public function generate(IDataBaseCreator $creator, $create = false);
+    public function geraScriptDeCriacaoDoBancoDeDados(IDataBaseCreator $creator);
+
+    /**
+     * Cria banco de dados
+     */
+    public function criaBancoDeDados(IDataBaseCreator $creator);
 }

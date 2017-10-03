@@ -2,11 +2,11 @@
 
 namespace PseudoORM\Services;
 
-use PseudoORM\Services\IDataBaseCreator;
+use PseudoORM\Services\IDatabaseCreator;
 
 use Addendum\ReflectionAnnotatedClass;
 
-class PostgreSQLDataBaseCreator implements IDataBaseCreator
+class PostgreSQLDatabaseCreator implements IDatabaseCreator
 {
     
     protected $tableName;

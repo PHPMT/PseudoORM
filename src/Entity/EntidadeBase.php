@@ -17,6 +17,16 @@ class EntidadeBase
             }
         }
     }
+
+    public function getClassShortName()
+    {
+        return (new \ReflectionClass($this))->getShortName();
+    }  
+
+    public function getClass()
+    {
+        return (new \ReflectionClass($this))->getName();
+    } 
     
     
     public function setUID($uid)

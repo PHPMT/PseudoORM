@@ -2,7 +2,7 @@
 
 namespace PseudoORM\Services;
 
-interface IDataBaseCreator
+interface IDatabaseCreator
 {
     
     /**
